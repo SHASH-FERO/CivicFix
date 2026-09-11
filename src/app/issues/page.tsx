@@ -22,7 +22,7 @@ export default async function IssuesPage() {
             Civic Feed & Map
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Browse, locate, and support infrastructure problems across your district.
+            Find it. Fund it. Fix it. Verify it. Browse, locate, and support infrastructure problems across your district.
           </p>
         </div>
 

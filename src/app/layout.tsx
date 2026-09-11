@@ -7,7 +7,7 @@ import Footer from '@/components/layout/Footer';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'CivicFix — See it. Fund it. Fix it. Verify it.',
+  title: 'CivicFix — Find it. Fund it. Fix it. Verify it.',
   description: 'Community-driven civic problem reporting, micro-crowdfunding, and verified local infrastructure repairs.',
 };
 

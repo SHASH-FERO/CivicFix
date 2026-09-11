@@ -21,7 +21,7 @@ export default async function AuthorityPage() {
           Authority Tracking Portal
         </h1>
         <p className="text-sm text-slate-500 mt-1">
-          Civic infrastructure issues requiring municipal machinery, utility excavation, or code enforcement.
+          Find it and route authority-required infrastructure issues to municipal machinery, utility excavation, or code enforcement.
         </p>
       </div>
 

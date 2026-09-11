@@ -102,6 +102,10 @@ export async function createIssueReport(params: {
       description: params.description,
       category_id: params.category_id || null,
       location: pointWkt,
+      // Keep the scalar WGS84 fields in sync with the PostGIS point for map
+      // rendering and reporting screens that do not parse geometry values.
+      latitude: params.latitude,
+      longitude: params.longitude,
       address: params.address || null,
       reporter_id: params.reporter_id,
       status: 'REPORTED',

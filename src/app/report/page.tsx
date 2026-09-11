@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { IssueCategory } from '@/types';
-import { Camera, MapPin, Sparkles, ShieldCheck, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Camera, MapPin, Sparkles, AlertCircle } from 'lucide-react';
+import { useGeolocation } from '@/hooks/useGeolocation';
 
 export default function ReportPage() {
   const router = useRouter();
@@ -17,9 +18,10 @@ export default function ReportPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [categoryId, setCategoryId] = useState('');
-  const [address, setAddress] = useState('45 George St, Downtown');
-  const [latitude, setLatitude] = useState('-33.8688');
-  const [longitude, setLongitude] = useState('151.2093');
+  const [address, setAddress] = useState('');
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
+  const { coordinates, status: locationStatus, error: locationError, requestLocation } = useGeolocation();
 
   useEffect(() => {
     async function loadCategories() {
@@ -39,8 +41,8 @@ export default function ReportPage() {
     setSubmitting(true);
 
     try {
-      const latNum = parseFloat(latitude);
-      const lonNum = parseFloat(longitude);
+      const latNum = coordinates?.latitude ?? parseFloat(latitude);
+      const lonNum = coordinates?.longitude ?? parseFloat(longitude);
 
       if (isNaN(latNum) || isNaN(lonNum)) {
         throw new Error('Please enter valid numeric latitude and longitude coordinates.');
@@ -48,16 +50,17 @@ export default function ReportPage() {
 
       // Default reporter ID to the demo citizen user
       const demoCitizenId = 'a0000000-0000-0000-0000-000000000002';
-      const pointWkt = `POINT(${lonNum} ${latNum})`;
-
       const { data, error } = await supabase
         .from('issues')
         .insert({
           title,
           description,
           category_id: categoryId || null,
-          location: pointWkt,
+          // PostGIS expects longitude first in the WGS84 point.
+          location: `POINT(${lonNum} ${latNum})`,
           address,
+          latitude: latNum,
+          longitude: lonNum,
           reporter_id: demoCitizenId,
           status: 'REPORTED',
         })
@@ -91,7 +94,7 @@ export default function ReportPage() {
           Report a Civic Hazard
         </h1>
         <p className="text-sm text-slate-600 mt-1">
-          Document an infrastructure problem. In the next phase, our AI Vision model will automatically analyze severity, components, and approximate restoration cost.
+        Find it. Fund it. Fix it. Verify it. Document an infrastructure problem and let our AI Vision model estimate severity, components, and restoration cost.
         </p>
       </div>
 
@@ -156,7 +159,7 @@ export default function ReportPage() {
           </div>
         </div>
 
-        {/* Location & GPS */}
+        {/* Location & GPS: coordinates come from the browser's real device GPS. */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
@@ -171,6 +174,37 @@ export default function ReportPage() {
             />
           </div>
 
+          <div className="sm:col-span-2 rounded-xl border border-blue-200 bg-blue-50/70 p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-2.5">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-blue-700" />
+                <div>
+                  <div className="text-xs font-bold text-blue-900">Real device location</div>
+                  <div className="mt-0.5 text-[11px] text-blue-800">
+                    {locationStatus === 'detecting' && 'Detecting your location...'}
+                    {locationStatus === 'active' && 'Live location active'}
+                    {locationStatus === 'error' && locationError}
+                    {locationStatus === 'idle' && 'Location detection is ready.'}
+                  </div>
+                  {coordinates && (
+                    <div className="mt-1 font-mono text-[11px] text-blue-900">
+                      {coordinates.latitude.toFixed(6)}, {coordinates.longitude.toFixed(6)} · ±{Math.round(coordinates.accuracy)} m
+                    </div>
+                  )}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={requestLocation}
+                disabled={locationStatus === 'detecting'}
+                className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg border border-blue-300 bg-white px-3 py-2 text-xs font-bold text-blue-800 hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <MapPin className="h-3.5 w-3.5" />
+                {locationStatus === 'detecting' ? 'Detecting...' : 'Use My Current Location'}
+              </button>
+            </div>
+          </div>
+
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
               Latitude (GPS WGS84)
@@ -178,6 +212,7 @@ export default function ReportPage() {
             <input
               type="text"
               required
+              inputMode="decimal"
               value={latitude}
               onChange={(e) => setLatitude(e.target.value)}
               className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm font-mono text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
@@ -191,6 +226,7 @@ export default function ReportPage() {
             <input
               type="text"
               required
+              inputMode="decimal"
               value={longitude}
               onChange={(e) => setLongitude(e.target.value)}
               className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm font-mono text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"

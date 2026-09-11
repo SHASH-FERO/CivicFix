@@ -42,7 +42,7 @@ export default async function ProviderPage() {
             Provider Dashboard
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Accept fully funded community repair orders, submit photographic proof, and receive simulated payouts.
+            Fix it and verify it: accept funded repair orders, submit photographic proof, and receive simulated payouts.
           </p>
         </div>
 

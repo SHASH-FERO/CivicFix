@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import Link from 'next/link';
-import { ShieldCheck, Heart } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -15,7 +15,7 @@ export default function Footer() {
               Civic<span className="text-emerald-600">Fix</span>
             </span>
             <span className="text-xs text-slate-500 ml-2">
-              — "See it. Fund it. Fix it. Verify it."
+              &mdash; &ldquo;Find it. Fund it. Fix it. Verify it.&rdquo;
             </span>
           </div>
 

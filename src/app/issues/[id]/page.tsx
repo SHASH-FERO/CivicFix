@@ -2,7 +2,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getIssueById } from '@/lib/services/issues';
-import { formatCurrency, formatDate, getStatusBadge, getSeverityBadge } from '@/lib/utils';
+import { formatCurrency, formatDate, getDisplayFunding, getStatusBadge, getSeverityBadge } from '@/lib/utils';
+import ContributionPanel from '@/components/issues/ContributionPanel';
 import { 
   MapPin, 
   ArrowLeft, 
@@ -31,8 +32,9 @@ export default async function IssueDetailPage({
 
   const statusInfo = getStatusBadge(issue.status);
   const severityInfo = getSeverityBadge(issue.severity);
-  const fundingPercent = issue.funding_target > 0 
-    ? Math.min(100, Math.round((issue.funding_raised / issue.funding_target) * 100))
+  const funding = getDisplayFunding(issue);
+  const fundingPercent = funding.target > 0
+    ? Math.min(100, Math.round((funding.raised / funding.target) * 100))
     : 0;
 
   // Work components from AI analysis
@@ -156,7 +158,7 @@ export default async function IssueDetailPage({
               </div>
             ) : (
               <div className="text-xs text-slate-400 bg-slate-50 p-3 rounded-md">
-                Standard category unit rate applies ({formatCurrency(issue.category?.base_unit_rate || 50)}/unit).
+                Approximate prototype estimate: standard category unit rate applies ({formatCurrency(issue.category?.base_unit_rate || 50)}/unit).
               </div>
             )}
           </div>
@@ -287,8 +289,17 @@ export default async function IssueDetailPage({
 
         {/* Right 1 Col: Crowdfunding & Action Center */}
         <div className="space-y-6">
+          <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-4">
+            <div className="text-xs font-bold uppercase tracking-wider text-emerald-800">
+              CivicFix workflow
+            </div>
+            <div className="mt-2 text-sm font-semibold text-slate-800">
+              Find it. Fund it. Fix it. Verify it.
+            </div>
+          </div>
+
           {/* Crowdfunding Card */}
-          {issue.resolution_type !== 'AUTHORITY_REQUIRED' && issue.funding_target > 0 && (
+          {issue.resolution_type !== 'AUTHORITY_REQUIRED' && funding.target > 0 && (
             <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-xs">
               <div className="flex items-center gap-2 mb-3">
                 <Coins className="h-5 w-5 text-amber-600" />
@@ -297,10 +308,10 @@ export default async function IssueDetailPage({
 
               <div className="mt-2">
                 <div className="text-3xl font-extrabold text-slate-900">
-                  {formatCurrency(issue.funding_raised)}
+                  {formatCurrency(funding.raised)}
                 </div>
                 <div className="text-xs text-slate-500">
-                  of {formatCurrency(issue.funding_target)} target funded
+                  of {formatCurrency(funding.target)} target funded
                 </div>
               </div>
 
@@ -317,18 +328,13 @@ export default async function IssueDetailPage({
                 <span>{fundingPercent}% funded</span>
                 <span>{issue.contributions?.length || 0} contributors</span>
               </div>
+              {fundingPercent >= 100 && (
+                <div className="mt-2 text-xs font-bold text-emerald-700">Funding Complete</div>
+              )}
 
               {/* Sandbox Test Contribution CTA */}
               <div className="mt-6 pt-4 border-t border-slate-100">
-                <button
-                  type="button"
-                  className="w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white shadow-xs hover:bg-emerald-500 transition-colors cursor-pointer"
-                >
-                  Pledge Test Contribution ($25)
-                </button>
-                <p className="mt-1.5 text-[11px] text-center text-slate-400">
-                  Sandbox demo mode — no real payment required.
-                </p>
+                <ContributionPanel issueId={issue.id} />
               </div>
 
               {/* Contributors list */}

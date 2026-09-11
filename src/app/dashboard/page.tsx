@@ -19,7 +19,7 @@ export default async function DashboardPage() {
             Citizen Dashboard
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Track reported neighborhood problems, crowdfunding campaigns, and community verification votes.
+            Find it. Fund it. Fix it. Verify it. Track neighborhood problems, funding, and community verification.
           </p>
         </div>
 

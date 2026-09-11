@@ -1,5 +1,33 @@
 @import "tailwindcss";
 
+.civicfix-user-marker {
+  background: transparent;
+  border: 0;
+}
+
+.civicfix-user-marker__dot {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border: 3px solid white;
+  border-radius: 9999px;
+  background: #2563eb;
+  box-shadow: 0 0 0 5px rgb(37 99 235 / 25%), 0 1px 4px rgb(15 23 42 / 40%);
+}
+
+.civicfix-user-marker__label {
+  position: absolute;
+  left: 25px;
+  top: 0;
+  white-space: nowrap;
+  border-radius: 4px;
+  background: #1d4ed8;
+  padding: 3px 5px;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

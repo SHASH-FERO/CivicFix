@@ -39,7 +39,7 @@ export default async function HomePage() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-black tracking-tight max-w-3xl mx-auto leading-tight">
-            See it. Fund it. <br className="hidden sm:inline" />
+            Find it. Fund it. <br className="hidden sm:inline" />
             <span className="text-emerald-400">Fix it. Verify it.</span>
           </h1>
 
@@ -103,7 +103,7 @@ export default async function HomePage() {
             <div className="h-10 w-10 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg mb-4">
               1
             </div>
-            <h3 className="text-base font-bold text-slate-900">1. See It</h3>
+            <h3 className="text-base font-bold text-slate-900">1. Find It</h3>
             <p className="mt-2 text-xs text-slate-600 leading-relaxed">
               Citizens capture photos and GPS coordinates. AI vision categorizes severity, lists repair components, and calculates deterministic costs.
             </p>

@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import Link from 'next/link';
 import { IssueWithDetails } from '@/types';
-import { formatCurrency, formatDate, getStatusBadge, getSeverityBadge } from '@/lib/utils';
+import { formatCurrency, formatDate, getDisplayFunding, getStatusBadge, getSeverityBadge } from '@/lib/utils';
 import { MapPin, ArrowRight, ShieldCheck, Building2, Wrench } from 'lucide-react';
 
 interface IssueCardProps {
@@ -11,8 +11,9 @@ interface IssueCardProps {
 export default function IssueCard({ issue }: IssueCardProps) {
   const statusInfo = getStatusBadge(issue.status);
   const severityInfo = getSeverityBadge(issue.severity);
-  const fundingPercent = issue.funding_target > 0 
-    ? Math.min(100, Math.round((issue.funding_raised / issue.funding_target) * 100))
+  const funding = getDisplayFunding(issue);
+  const fundingPercent = funding.target > 0
+    ? Math.min(100, Math.round((funding.raised / funding.target) * 100))
     : 0;
 
   return (
@@ -65,12 +66,12 @@ export default function IssueCard({ issue }: IssueCardProps) {
             </div>
             <span className="font-medium text-purple-800">{issue.authority_case?.status || 'Pending'}</span>
           </div>
-        ) : issue.funding_target > 0 ? (
+        ) : funding.target > 0 ? (
           <div>
             <div className="flex items-center justify-between text-xs mb-1">
               <span className="text-slate-600">Crowdfunding Progress</span>
               <span className="font-semibold text-slate-900">
-                {formatCurrency(issue.funding_raised)} / {formatCurrency(issue.funding_target)}
+                {formatCurrency(funding.raised)} / {formatCurrency(funding.target)}
               </span>
             </div>
             <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">

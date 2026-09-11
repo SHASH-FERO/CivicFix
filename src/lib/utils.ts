@@ -6,13 +6,47 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatCurrency(amount: number | null | undefined): string {
-  if (amount === null || amount === undefined) return '$0.00';
-  return new Intl.NumberFormat('en-US', {
+  if (amount === null || amount === undefined) return '₹0';
+  return new Intl.NumberFormat('en-IN', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'INR',
     minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
+    maximumFractionDigits: 0,
   }).format(amount);
+}
+
+/**
+ * Demo records created before CivicFix adopted INR may contain very small
+ * prototype targets. This display-only adapter keeps Supabase data intact
+ * while presenting believable community funding ranges in the hackathon UI.
+ */
+export function getDisplayFunding(issue: {
+  funding_raised: number;
+  funding_target: number;
+  resolution_type?: string | null;
+  severity?: string | null;
+}) {
+  if (issue.resolution_type === 'AUTHORITY_REQUIRED' || issue.funding_target <= 0) {
+    return { raised: issue.funding_raised, target: issue.funding_target };
+  }
+
+  const target =
+    issue.funding_target >= 1000 && issue.funding_target <= 5000
+      ? issue.funding_target
+      : issue.severity === 'LOW'
+        ? 1500
+        : issue.severity === 'MEDIUM'
+          ? 3000
+          : 5000;
+
+  // Preserve the original progress ratio when legacy demo records use
+  // sub-thousand values, rather than showing a misleading zero progress.
+  const originalProgress = issue.funding_target > 0
+    ? Math.min(1, Math.max(0, issue.funding_raised / issue.funding_target))
+    : 0;
+  const raised = Math.round(originalProgress * target);
+
+  return { raised, target };
 }
 
 export function formatDate(dateString: string | null | undefined): string {

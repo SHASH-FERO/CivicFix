@@ -82,6 +82,9 @@ export default function LoginPage() {
           Sign In to Civic<span className="text-emerald-600">Fix</span>
         </h1>
         <p className="text-sm text-slate-500 mt-2">
+          Find it. Fund it. Fix it. Verify it.
+        </p>
+        <p className="text-sm text-slate-500 mt-2">
           Connect with Supabase Auth to participate in community crowdfunding and infrastructure verification.
         </p>
       </div>
